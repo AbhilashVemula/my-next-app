@@ -1,6 +1,6 @@
 // layout is common to the entire application. all components will be treated as childer
 
-import './globals.css'
+import '../styles/globals.css';
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import  Link from 'next/link';
