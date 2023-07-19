@@ -40,9 +40,9 @@
         "async": false
       }
     },
-    "(app-client)/./node_modules/next/dist/client/image-component.js": {
+    "(app-client)/./node_modules/next/dist/client/link.js": {
       "*": {
-        "id": "(sc_client)/./node_modules/next/dist/client/image-component.js",
+        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "*",
         "chunks": [],
         "async": false
@@ -131,6 +131,22 @@
       ],
       "async": false
     },
+    "/Users/apple/Desktop/my-next-app/node_modules/next/dist/client/link.js": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "*",
+      "chunks": [
+        "app/layout:static/chunks/app/layout.js"
+      ],
+      "async": false
+    },
+    "/Users/apple/Desktop/my-next-app/node_modules/next/dist/esm/client/link.js": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "*",
+      "chunks": [
+        "app/layout:static/chunks/app/layout.js"
+      ],
+      "async": false
+    },
     "/Users/apple/Desktop/my-next-app/node_modules/next/font/google/target.css?{\"path\":\"src/app/layout.tsx\",\"import\":\"Inter\",\"arguments\":[{\"subsets\":[\"latin\"]}],\"variableName\":\"inter\"}": {
       "id": "(app-client)/./node_modules/next/font/google/target.css?{\"path\":\"src/app/layout.tsx\",\"import\":\"Inter\",\"arguments\":[{\"subsets\":[\"latin\"]}],\"variableName\":\"inter\"}",
       "name": "*",
@@ -146,28 +162,17 @@
         "app/layout:static/chunks/app/layout.js"
       ],
       "async": false
-    },
-    "/Users/apple/Desktop/my-next-app/node_modules/next/dist/client/image-component.js": {
-      "id": "(app-client)/./node_modules/next/dist/client/image-component.js",
-      "name": "*",
-      "chunks": [
-        "app/page:static/chunks/app/page.js"
-      ],
-      "async": false
-    },
-    "/Users/apple/Desktop/my-next-app/node_modules/next/dist/esm/client/image-component.js": {
-      "id": "(app-client)/./node_modules/next/dist/client/image-component.js",
-      "name": "*",
-      "chunks": [
-        "app/page:static/chunks/app/page.js"
-      ],
-      "async": false
     }
   },
   "entryCSSFiles": {
+    "/Users/apple/Desktop/my-next-app/src/app/page": [],
     "/Users/apple/Desktop/my-next-app/src/app/layout": [
       "static/css/app/layout.css"
     ],
-    "/Users/apple/Desktop/my-next-app/src/app/page": []
+    "/Users/apple/Desktop/my-next-app/src/app/about/page": [],
+    "/Users/apple/Desktop/my-next-app/src/app/settings/page": [],
+    "/Users/apple/Desktop/my-next-app/src/app/contact/page": [],
+    "/Users/apple/Desktop/my-next-app/src/app/contact/nested/page": [],
+    "/Users/apple/Desktop/my-next-app/src/app/product/page": []
   }
 }
