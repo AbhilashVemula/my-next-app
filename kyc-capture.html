@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC Document Capture</title>
+
+<style>
+body{
+  font-family: Arial;
+  text-align:center;
+  background:#111;
+  color:white;
+}
+
+.container{
+  position:relative;
+  display:inline-block;
+}
+
+video, img{
+  width:95vw;
+  max-width:420px;
+  border-radius:10px;
+}
+
+.frame{
+  position:absolute;
+  top:30%;
+  left:10%;
+  width:80%;
+  height:40%;
+  border:3px solid white;
+  border-radius:12px;
+  box-shadow:0 0 0 2000px rgba(0,0,0,0.6);
+}
+
+.watermark{
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  background:rgba(0,0,0,0.6);
+  padding:6px 10px;
+  border-radius:6px;
+  font-size:13px;
+}
+
+button{
+  margin:10px;
+  padding:12px 18px;
+  font-size:16px;
+  border:none;
+  border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<h3>KYC Document Capture</h3>
+
+<div id="cameraSection">
+  <div class="container">
+    <video id="video" autoplay playsinline></video>
+    <div class="frame"></div>
+  </div>
+  <br>
+  <button onclick="capture()">📸 Capture</button>
+</div>
+
+<div id="previewSection" style="display:none">
+  <div class="container">
+    <img id="preview">
+    <div class="watermark" id="watermark"></div>
+  </div>
+  <br>
+  <button onclick="retake()">🔄 Retake</button>
+</div>
+
+<canvas id="canvas" style="display:none"></canvas>
+
+<script>
+
+let video = document.getElementById("video");
+let canvas = document.getElementById("canvas");
+let preview = document.getElementById("preview");
+
+async function startCamera(){
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video:{ facingMode:"environment" }
+  });
+
+  video.srcObject = stream;
+}
+
+startCamera();
+
+function capture(){
+
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  ctx.drawImage(video,0,0);
+
+  const dataUrl = canvas.toDataURL("image/jpeg",0.9);
+
+  preview.src = dataUrl;
+
+  document.getElementById("cameraSection").style.display="none";
+  document.getElementById("previewSection").style.display="block";
+
+  const watermark =
+    "Bank KYC • " + new Date().toLocaleString();
+
+  document.getElementById("watermark").innerText = watermark;
+}
+
+function retake(){
+  document.getElementById("previewSection").style.display="none";
+  document.getElementById("cameraSection").style.display="block";
+}
+
+</script>
+
+</body>
+</html>
