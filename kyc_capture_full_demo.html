@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KYC Capture Demo</title>
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+.container{
+max-width:420px;
+margin:auto;
+padding:20px;
+}
+
+.upload-box{
+border:2px dashed #ccc;
+padding:30px;
+text-align:center;
+background:white;
+border-radius:10px;
+cursor:pointer;
+}
+
+.preview img{
+width:100%;
+border-radius:10px;
+margin-top:10px;
+}
+
+.status{
+margin-bottom:10px;
+font-size:14px;
+}
+
+.loading{color:orange}
+.success{color:green}
+
+button{
+padding:12px;
+border:none;
+border-radius:6px;
+background:#e60012;
+color:white;
+margin-top:10px;
+width:100%;
+font-size:16px;
+}
+
+.remove{background:#666}
+
+.bottom-sheet-overlay{
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,0.5);
+display:none;
+align-items:flex-end;
+z-index:9999;
+}
+
+.bottom-sheet{
+background:white;
+width:100%;
+padding:20px;
+border-radius:16px 16px 0 0;
+}
+
+.bottom-sheet button{
+background:white;
+color:black;
+border:1px solid #ddd;
+margin:6px 0;
+}
+
+.camera-screen{
+display:none;
+}
+
+.camera-container{
+position:relative;
+}
+
+video{
+width:100%;
+border-radius:10px;
+}
+
+.frame{
+position:absolute;
+top:30%;
+left:10%;
+width:80%;
+height:40%;
+border:3px solid white;
+border-radius:10px;
+box-shadow:0 0 0 2000px rgba(0,0,0,0.6);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h3>KYC Document Upload</h3>
+
+<div class="status" id="status"></div>
+
+<div id="uploadBox" class="upload-box">
+Tap to upload ID card
+</div>
+
+<div id="preview" class="preview"></div>
+
+</div>
+
+<div id="sheet" class="bottom-sheet-overlay">
+<div class="bottom-sheet">
+
+<button onclick="startCamera()">📷 Take Photo</button>
+<button onclick="openGallery()">🖼 Photo Library</button>
+<button onclick="openFiles()">📁 Select File</button>
+<button onclick="closeSheet()">Cancel</button>
+
+</div>
+</div>
+
+<div id="cameraScreen" class="camera-screen container">
+
+<div class="camera-container">
+<video id="video" autoplay playsinline muted></video>
+<div class="frame"></div>
+</div>
+
+<button onclick="capture()">Capture</button>
+<button class="remove" onclick="closeCamera()">Cancel</button>
+
+</div>
+
+<input id="galleryInput" type="file" accept="image/*" style="display:none">
+<input id="fileInput" type="file" style="display:none">
+
+<canvas id="canvas" style="display:none"></canvas>
+
+<script>
+
+const uploadBox=document.getElementById("uploadBox")
+const sheet=document.getElementById("sheet")
+const preview=document.getElementById("preview")
+const status=document.getElementById("status")
+
+const video=document.getElementById("video")
+const canvas=document.getElementById("canvas")
+
+const galleryInput=document.getElementById("galleryInput")
+const fileInput=document.getElementById("fileInput")
+
+let stream=null
+
+uploadBox.addEventListener("click",()=>{
+sheet.style.display="flex"
+})
+
+sheet.addEventListener("click",(e)=>{
+if(e.target===sheet){
+closeSheet()
+}
+})
+
+function closeSheet(){
+sheet.style.display="none"
+}
+
+function openGallery(){
+closeSheet()
+galleryInput.click()
+}
+
+function openFiles(){
+closeSheet()
+fileInput.click()
+}
+
+galleryInput.onchange=e=>handleFile(e.target.files[0])
+fileInput.onchange=e=>handleFile(e.target.files[0])
+
+async function startCamera(){
+
+closeSheet()
+
+document.getElementById("cameraScreen").style.display="block"
+
+if(!navigator.mediaDevices){
+alert("Camera not supported")
+return
+}
+
+try{
+
+stream=await navigator.mediaDevices.getUserMedia({
+video:{facingMode:{ideal:"environment"}},
+audio:false
+})
+
+video.srcObject=stream
+
+}catch(e){
+
+alert("Camera error: "+e.message)
+
+}
+
+}
+
+function closeCamera(){
+
+document.getElementById("cameraScreen").style.display="none"
+
+if(stream){
+stream.getTracks().forEach(track=>track.stop())
+}
+
+}
+
+function capture(){
+
+const ctx=canvas.getContext("2d")
+
+canvas.width=video.videoWidth
+canvas.height=video.videoHeight
+
+ctx.drawImage(video,0,0)
+
+const w=canvas.width
+const h=canvas.height
+
+const cropX=w*0.1
+const cropY=h*0.3
+const cropW=w*0.8
+const cropH=h*0.4
+
+const cropCanvas=document.createElement("canvas")
+cropCanvas.width=cropW
+cropCanvas.height=cropH
+
+const cropCtx=cropCanvas.getContext("2d")
+
+cropCtx.drawImage(
+canvas,
+cropX,
+cropY,
+cropW,
+cropH,
+0,
+0,
+cropW,
+cropH
+)
+
+const image=cropCanvas.toDataURL("image/jpeg",0.9)
+
+closeCamera()
+
+showPreview(image)
+
+}
+
+function handleFile(file){
+
+if(!file) return
+
+const reader=new FileReader()
+
+reader.onload=e=>{
+showPreview(e.target.result)
+}
+
+reader.readAsDataURL(file)
+
+}
+
+function showPreview(src){
+
+status.innerHTML="Uploading..."
+status.className="status loading"
+
+setTimeout(()=>{
+
+status.innerHTML="Uploaded"
+status.className="status success"
+
+preview.innerHTML=`
+<img src="${src}">
+<button class="remove" onclick="removeImage()">Remove</button>
+`
+
+},1200)
+
+}
+
+function removeImage(){
+
+preview.innerHTML=""
+status.innerHTML=""
+
+}
+
+</script>
+
+</body>
+</html>
